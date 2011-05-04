@@ -1,5 +1,0 @@
-#define textcolor #333
-
-body {
-    color: ${textcolor};	
-}

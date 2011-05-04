@@ -1,0 +1,7 @@
+.framed {
+	border: 1px solid ${bordercolor};
+	border-radius: 5px;
+	display: inline-block;
+	padding: 10px;
+	-x-linear-background: ${boxbgcolor},${boxbgcolorstop};
+}

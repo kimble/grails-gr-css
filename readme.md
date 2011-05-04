@@ -8,6 +8,8 @@ I started working on this plugin to address my two biggest pain points when writ
  * No variables, I keep repeating the same hex codes multiple places.
  * Having to write more or less the same CSS3 lines over and over again with different vendor prefixes.  
 
+Yes, I know that there are quite a few languages out there compiling to CSS. I originally wanted to make use of one of those alternatives, but they all seem to be implemented in Ruby, JavaScript and other languages that requires adding 3+ MB of dependencies to your project in order to run on the JVM. I want a small and fast solution that integrates nicely with Grails and solves my two biggest CSS annoyances.
+
 Pain point number one: Something like CSS variables
 -------------------------------------------------
 This is not the implementation that has been suggested for CSS, but just a very simple approach implemented with a line by line regex search and replace. 

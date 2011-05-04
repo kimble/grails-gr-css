@@ -29,7 +29,6 @@ The vendor prefixed lines still have to go in there, but at least you don't have
     modules = {
         // ... define your modules and resources as usual
     }
-    
     cssProcessors = {
             
         // Automatic generation of vendor prefixed lines
@@ -50,3 +49,7 @@ The vendor prefixed lines still have to go in there, but at least you don't have
         }
        
     }
+
+Examples
+------------------
+Have a look in the [CSS folder](https://github.com/kimble/grails-gr-css/tree/master/web-app/css) and at the [resource definition file](https://github.com/kimble/grails-gr-css/blob/master/grails-app/conf/testResources.groovy) for more examples. 

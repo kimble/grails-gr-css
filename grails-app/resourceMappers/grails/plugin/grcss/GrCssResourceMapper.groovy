@@ -19,10 +19,10 @@ class GrCssResourceMapper implements InitializingBean {
 
     static final Logger log = LoggerFactory.getLogger(GrCssResourceMapper)
     
-    int priority = 1001
+    int priority = 1001 // TODO: Make use of the new phase system
     
     CssProcessorLoader cssProcessorLoader
-    Map cssRuleProcessors
+    Map cssRuleProcessors = [:]
     Map cssVariables = [:]   
     
     @Override
@@ -98,6 +98,7 @@ class GrCssResourceMapper implements InitializingBean {
                 StringBuilder output = new StringBuilder(300)
                 CssRuleProcessor ruleProcessor = cssRuleProcessors[ruleName]
                 ruleProcessor.process(ruleName, arguments, output)
+                
                 line = line.replace(matched, output.toString())
             }
         }

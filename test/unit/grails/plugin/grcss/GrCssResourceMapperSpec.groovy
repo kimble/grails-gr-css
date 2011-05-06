@@ -66,4 +66,20 @@ class GrCssResourceMapperSpec extends UnitSpec {
         ex.lineNumber == 10
     }
     
+    @Unroll("#input should be transformed to #expectedOutput")
+    def "Simple test of css post processors"() {
+        setup:
+        def processorClosure = { out << "-x-groovy-rules: $it;" }
+        def customProcessor = new CssRuleProcessor(processorClosure)
+        mapper.cssRuleProcessors['border-radius'] = customProcessor
+        
+        expect:
+        mapper.subjectToCssProcessors(input) == expectedOutput
+        
+        where:
+        input                           | expectedOutput
+        "border-radius: a lot;"         | "-x-groovy-rules: a lot;"
+        "color: #333;"                  | "color: #333;"
+    }
+    
 }

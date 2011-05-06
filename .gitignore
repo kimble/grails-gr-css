@@ -20,3 +20,6 @@ DomainUML.html
 *.iml
 .project
 spy.log
+*.zip
+*.xml
+*.sha1

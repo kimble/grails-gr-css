@@ -51,7 +51,7 @@ class GrCssResourceMapper implements InitializingBean {
     }
     
     protected String pickUpAnyVariableDefinition(String line) { 
-        Matcher matcher = (line =~ /^\#define\s+([a-zA-Z0-9]+)\s+(.*)$/)
+        Matcher matcher = (line =~ /^\#define\s+([\w\-]+)\s+(.*)$/)
         if (matcher.matches()) {
             String variableName = matcher[0][1]
             String value = matcher[0][2]
@@ -65,7 +65,7 @@ class GrCssResourceMapper implements InitializingBean {
     }
     
     protected String insertVariables(String line) {
-        Matcher varMatcher = (line =~ /\$\{([a-z-A-Z0-9]+)\}/)
+        Matcher varMatcher = (line =~ /\$\{([\w\-]+)\}/)
         varMatcher.each { matched, variableName ->
             if (cssVariables.containsKey(variableName)) {
                 line = line.replace(matched, cssVariables[variableName])

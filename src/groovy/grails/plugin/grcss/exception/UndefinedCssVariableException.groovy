@@ -1,17 +1,16 @@
 package grails.plugin.grcss.exception
 
 /**
- * Thrown when we find a reference to 
- * a undefined CSS variable. 
+ * Thrown when we find a reference to a undefined CSS variable. 
  * @author Kim A. Betti
  */
 class UndefinedCssVariableException extends GrCssException {
 
-    String variableName
+    final String variableName
 
-    @Override
-    public String getMessage() {
-        "Undefiend CSS variable '$variableName' on line ${ lineNumber ?: 'UNKOWN' } in ${ filename ?: 'UNKOWN' }"
+    public UndefinedCssVariableException(String variableName) {
+        super("Undefiend CSS variable '$variableName'".toString())
+        this.variableName = variableName
     }
-    
+
 }

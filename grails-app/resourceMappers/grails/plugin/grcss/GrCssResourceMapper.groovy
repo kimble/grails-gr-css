@@ -1,6 +1,8 @@
 package grails.plugin.grcss
 
+import grails.plugin.grcss.exception.CssRuleProcessingException;
 import grails.plugin.grcss.exception.GrCssException
+import grails.plugin.grcss.exception.SourceAwareGrCssException;
 import grails.plugin.grcss.exception.UndefinedCssVariableException
 
 import java.util.regex.Matcher
@@ -55,9 +57,8 @@ class GrCssResourceMapper implements InitializingBean {
             line = insertVariables(line)
             return subjectToCssProcessors(line) + "\n"
         } catch (GrCssException gex) {
-            gex.lineNumber = lineNumber
-            gex.filename = filename
-            throw gex
+            String message = gex.message + " on line $lineNumber in $filename"
+            throw new SourceAwareGrCssException(message, filename, lineNumber, gex)
         }
     }
     
@@ -81,7 +82,7 @@ class GrCssResourceMapper implements InitializingBean {
             if (cssVariables.containsKey(variableName)) {
                 line = line.replace(matched, cssVariables[variableName])
             } else {
-                throw new UndefinedCssVariableException(variableName: variableName)
+                throw new UndefinedCssVariableException(variableName)
             }
         }
         
@@ -95,11 +96,14 @@ class GrCssResourceMapper implements InitializingBean {
             if (cssRuleProcessors.containsKey(ruleName)) {
                 log.debug "Processing $ruleName"
 
-                StringBuilder output = new StringBuilder(300)
-                CssRuleProcessor ruleProcessor = cssRuleProcessors[ruleName]
-                ruleProcessor.process(ruleName, arguments, output)
-                
-                line = line.replace(matched, output.toString())
+                try {
+                    StringBuilder output = new StringBuilder(300)
+                    CssRuleProcessor ruleProcessor = cssRuleProcessors[ruleName]
+                    ruleProcessor.process(ruleName, arguments, output)
+                    line = line.replace(matched, output.toString())
+                } catch (Exception ex) {
+                    throw new CssRuleProcessingException("Exception thrown during processing of CSS rule '$ruleName'", ex)
+                }
             }
         }
         

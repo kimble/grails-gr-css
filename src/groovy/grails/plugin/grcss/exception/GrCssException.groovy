@@ -1,12 +1,18 @@
 package grails.plugin.grcss.exception
 
 /**
- * 
+ * Base class for CSS related exceptions
+ * that might occur during mapping / processing. 
  * @author Kim A. Betti
  */
-class GrCssException extends RuntimeException {
+abstract class GrCssException extends RuntimeException {
 
-    String filename
-    Integer lineNumber
+    public GrCssException(String message, Throwable cause) {
+        super(message, cause)
+    }
+
+    public GrCssException(String message) {
+        super(message)
+    }
 
 }

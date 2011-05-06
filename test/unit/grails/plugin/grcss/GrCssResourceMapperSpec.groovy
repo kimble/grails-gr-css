@@ -1,9 +1,11 @@
 package grails.plugin.grcss
 
-import spock.lang.Unroll;
-import grails.plugin.grcss.exception.UndefinedCssVariableException;
-import grails.plugin.spock.UnitSpec;
 import static java.util.Collections.EMPTY_MAP
+import grails.plugin.grcss.exception.CssRuleProcessingException
+import grails.plugin.grcss.exception.SourceAwareGrCssException
+import grails.plugin.grcss.exception.UndefinedCssVariableException
+import grails.plugin.spock.UnitSpec
+import spock.lang.Unroll
 
 /**
  * 
@@ -51,8 +53,6 @@ class GrCssResourceMapperSpec extends UnitSpec {
         then:
         UndefinedCssVariableException ex = thrown()
         ex.variableName == "ugga-bugga"
-        ex.lineNumber == null // will be filled out later
-        ex.filename == null
     }
     
     def "Line number and file name should be filled out for GrCssExceptions"() {
@@ -60,7 +60,7 @@ class GrCssResourceMapperSpec extends UnitSpec {
         mapper.processCssLine('color: ${not-defined}', "main.css", 10)
         
         then:
-        UndefinedCssVariableException ex = thrown()
+        SourceAwareGrCssException ex = thrown()
         ex.message == "Undefiend CSS variable 'not-defined' on line 10 in main.css"
         ex.filename == "main.css"
         ex.lineNumber == 10
@@ -80,6 +80,20 @@ class GrCssResourceMapperSpec extends UnitSpec {
         input                           | expectedOutput
         "border-radius: a lot;"         | "-x-groovy-rules: a lot;"
         "color: #333;"                  | "color: #333;"
+    }
+    
+    def "Should wrap exceptions thrown from processors"() {
+        setup:
+        def throwingClosure = { throw new Exception("something is wrong") }
+        def throwingProcessor = new CssRuleProcessor(throwingClosure)
+        mapper.cssRuleProcessors['color'] = throwingProcessor
+        
+        when:
+        mapper.subjectToCssProcessors("color: #123;")
+        
+        then:
+        CssRuleProcessingException ex = thrown()
+        ex.cause.message == "something is wrong"
     }
     
 }

@@ -2,7 +2,7 @@ import grails.plugin.grcss.CssProcessorLoader;
 
 class GrCssGrailsPlugin {
 
-    def version = "0.1"
+    def version = "0.2"
     def grailsVersion = "1.3.7 > *"
     
     def dependsOn = [:]
@@ -10,6 +10,7 @@ class GrCssGrailsPlugin {
     
     def pluginExcludes = [
         "grails-app/views/error.gsp",
+        "grails-app/conf/testResources.groovy",
         "web-app/css/**"
     ]
 

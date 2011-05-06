@@ -1,13 +1,14 @@
 package grails.plugin.grcss
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern
+import grails.plugin.grcss.exception.GrCssException
+import grails.plugin.grcss.exception.UndefinedCssVariableException
+
+import java.util.regex.Matcher
 
 import org.grails.plugin.resource.ResourceMeta
-import org.grails.plugin.resource.ResourceService;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.InitializingBean
 
 /**
  * Provides basic support for something like CSS variables 
@@ -39,15 +40,25 @@ class GrCssResourceMapper implements InitializingBean {
     }
     
     protected String processCssFile(File cssFile) {
+        String filename = cssFile.absolutePath
         StringBuilder output = new StringBuilder(2000)
-        cssFile.eachLine { String line ->
-             line = pickUpAnyVariableDefinition(line)
-             line = insertVariables(line)
-             line = subjectToCssProcessors(line)
-             output.append(line).append('\n')
+        cssFile.eachLine { String line, int lineNumber ->
+            output << processCssLine(line, filename, lineNumber)
         }
         
         return output.toString()
+    }
+    
+    protected String processCssLine(String line, String filename, int lineNumber) {
+        try {
+            line = pickUpAnyVariableDefinition(line)
+            line = insertVariables(line)
+            return subjectToCssProcessors(line) + "\n"
+        } catch (GrCssException gex) {
+            gex.lineNumber = lineNumber
+            gex.filename = filename
+            throw gex
+        }
     }
     
     protected String pickUpAnyVariableDefinition(String line) { 
@@ -65,12 +76,12 @@ class GrCssResourceMapper implements InitializingBean {
     }
     
     protected String insertVariables(String line) {
-        Matcher varMatcher = (line =~ /\$\{([\w\-]+)\}/)
+        Matcher varMatcher = (line =~ /\$\{([\w\-\_]+)\}/)
         varMatcher.each { matched, variableName ->
             if (cssVariables.containsKey(variableName)) {
                 line = line.replace(matched, cssVariables[variableName])
             } else {
-                log.warn "Found reference to an undeclared variable $variableName"
+                throw new UndefinedCssVariableException(variableName: variableName)
             }
         }
         
@@ -78,7 +89,7 @@ class GrCssResourceMapper implements InitializingBean {
     }
     
     protected String subjectToCssProcessors(String line) {
-        Matcher cssRuleMatcher = (line =~ /([\w\-]+)\:\s?([^\;]+)\;/)
+        Matcher cssRuleMatcher = (line =~ /([\w\-\_]+)\:\s?([^\;]+)\;/)
         
         cssRuleMatcher.each { matched, ruleName, arguments ->
             if (cssRuleProcessors.containsKey(ruleName)) {

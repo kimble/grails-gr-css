@@ -8,6 +8,7 @@ import grails.plugin.grcss.exception.UndefinedCssVariableException
 import java.util.regex.Matcher
 
 import org.grails.plugin.resource.ResourceMeta
+import static org.grails.plugin.resource.mapper.MapperPhase.MUTATION;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.InitializingBean
@@ -21,7 +22,7 @@ class GrCssResourceMapper implements InitializingBean {
 
     static final Logger log = LoggerFactory.getLogger(GrCssResourceMapper)
     
-    int priority = 1001 // TODO: Make use of the new phase system
+    def phase = MUTATION
     
     CssProcessorLoader cssProcessorLoader
     Map cssRuleProcessors = [:]

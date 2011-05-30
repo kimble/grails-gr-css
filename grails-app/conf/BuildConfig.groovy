@@ -31,9 +31,9 @@ grails.project.dependency.resolution = {
     }
     
     plugins {
-        compile ":resources:1.0-RC2"
+        compile ":resources:1.0"
         
-        compile ":release:1.0.0.M1", {
+        compile ":release:1.0.0.M2", {
             export = false   
         }
         
